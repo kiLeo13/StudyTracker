@@ -18,7 +18,7 @@ import static std.trck.database.tables.Assignments.ASSIGNMENTS;
 import static std.trck.database.tables.Professors.PROFESSORS;
 import static std.trck.database.tables.Subjects.SUBJECTS;
 
-public class AssignmentsRepository implements Repository<Integer, Assignments, AssignmentRec> {
+public class AssignmentsRepository implements Repository<String, Assignments, AssignmentRec> {
 
     public int fetchCount(int professorId, int subject, boolean includePast) {
 
@@ -33,10 +33,10 @@ public class AssignmentsRepository implements Repository<Integer, Assignments, A
     }
 
     public AssignmentData fetchFullAssignment(int professorId, int subject, boolean includePast, int offset) {
-        return fetchFullAssignment(-1, professorId, subject, includePast, offset);
+        return fetchFullAssignment(null, professorId, subject, includePast, offset);
     }
 
-    public AssignmentData fetchFullAssignment(int assgnId, int professorId, int subject, boolean includePast, int offset) {
+    public AssignmentData fetchFullAssignment(String assgnId, int professorId, int subject, boolean includePast, int offset) {
 
         List<AssignmentData> assignments = fetchFullAssignments(assgnId, professorId, subject, includePast, offset, 1, null);
 
@@ -46,10 +46,22 @@ public class AssignmentsRepository implements Repository<Integer, Assignments, A
     }
 
     public List<AssignmentData> fetchFullAssignments(boolean past, Function<Assignments, ? extends Condition> cnd) {
-        return fetchFullAssignments(-1, -1, -1, past, 0, -1, cnd);
+        return fetchFullAssignments(null, -1, -1, past, 0, -1, cnd);
     }
 
-    public List<AssignmentData> fetchFullAssignments(int assgnId, int professorId, int subjectId, boolean includePast, int offset, int limit, Function<Assignments, ? extends Condition> cnd) {
+    public List<AssignmentRec> fetchAll(boolean past, int limit) {
+
+        long now = Bot.unixNow();
+        DSLContext ctx = DBManager.getContext();
+
+        return ctx.selectFrom(getTable())
+                .where(past ? noCondition() : ASSIGNMENTS.DUE_DATE.gt(now))
+                .orderBy(ASSIGNMENTS.DUE_DATE.asc())
+                .limit(limit)
+                .fetch();
+    }
+
+    public List<AssignmentData> fetchFullAssignments(String assgnId, int professorId, int subjectId, boolean includePast, int offset, int limit, Function<Assignments, ? extends Condition> cnd) {
 
         long now = Bot.unixNow();
         DSLContext ctx = DBManager.getContext();
@@ -61,7 +73,7 @@ public class AssignmentsRepository implements Repository<Integer, Assignments, A
                 .where(cnd == null    ? noCondition() : cnd.apply(getTable()))
                 .and(subjectId <= 0   ? noCondition() : ASSIGNMENTS.SUBJECT_ID.eq(subjectId))
                 .and(includePast      ? noCondition() : ASSIGNMENTS.DUE_DATE.gt(now))
-                .and(assgnId     <= 0 ? noCondition() : ASSIGNMENTS.ID.eq(assgnId))
+                .and(assgnId == null  ? noCondition() : ASSIGNMENTS.ID.eq(assgnId))
                 .and(professorId <= 0 ? noCondition() : PROFESSORS.ID.eq(professorId))
                 .orderBy(ASSIGNMENTS.CREATED_AT.asc())
                 .limit(limit)

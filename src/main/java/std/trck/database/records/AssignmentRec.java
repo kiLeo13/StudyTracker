@@ -3,6 +3,8 @@ package std.trck.database.records;
 import org.jooq.impl.TableRecordImpl;
 import std.trck.database.tables.Assignments;
 
+import java.util.UUID;
+
 public class AssignmentRec extends TableRecordImpl<AssignmentRec> {
 
     private static final Assignments ASSIGNMENTS = Assignments.ASSIGNMENTS;
@@ -11,18 +13,27 @@ public class AssignmentRec extends TableRecordImpl<AssignmentRec> {
         super(ASSIGNMENTS);
     }
 
-    public AssignmentRec(int professorId, int subjectId, String title, String description, long dueDate) {
+    public AssignmentRec(int professorId, int subjectId, String title, String desc, long dueDate) {
         this();
 
+        set(ASSIGNMENTS.ID, UUID.randomUUID().toString());
         set(ASSIGNMENTS.PROFESSOR_ID, professorId);
         set(ASSIGNMENTS.SUBJECT_ID, subjectId);
         set(ASSIGNMENTS.TITLE, title);
-        set(ASSIGNMENTS.DESCRIPTION, description);
+        set(ASSIGNMENTS.DESCRIPTION, desc == null ? "" : desc);
         set(ASSIGNMENTS.DUE_DATE, dueDate);
     }
 
-    public int getId() {
+    public String getUUID() {
         return get(ASSIGNMENTS.ID);
+    }
+
+    public int getProfessorId() {
+        return get(ASSIGNMENTS.PROFESSOR_ID);
+    }
+
+    public int getSubjectId() {
+        return get(ASSIGNMENTS.SUBJECT_ID);
     }
 
     public String getTitle() {
@@ -30,7 +41,8 @@ public class AssignmentRec extends TableRecordImpl<AssignmentRec> {
     }
 
     public String getDescription() {
-        return get(ASSIGNMENTS.DESCRIPTION);
+        String desc = get(ASSIGNMENTS.DESCRIPTION);
+        return desc == null || desc.isBlank() ? null : desc;
     }
 
     public long getDueDate() {

@@ -8,14 +8,14 @@ import std.trck.database.records.AssignmentRec;
 
 import static org.jooq.impl.DSL.name;
 
-public class Assignments extends AbstractTable<Integer, AssignmentRec> {
+public class Assignments extends AbstractTable<String, AssignmentRec> {
 
     public static final String DATE_FORMATTER = "dd/MM/yyyy";
     public static final String DATETIME_FORMATTER = "dd/MM/yyyy HH:mm";
 
     public static final Assignments ASSIGNMENTS = new Assignments();
 
-    public final Field<Integer> ID           = createField(name("id"),           SQLDataType.INTEGER.identity(true));
+    public final Field<String> ID            = createField(name("uuid"),           SQLDataType.CHAR.notNull());
     public final Field<Integer> PROFESSOR_ID = createField(name("professor_id"), SQLDataType.INTEGER.notNull());
     public final Field<Integer> SUBJECT_ID   = createField(name("subject_id"),   SQLDataType.INTEGER.notNull());
     public final Field<String> TITLE         = createField(name("title"),        SQLDataType.CHAR.notNull());
@@ -28,7 +28,7 @@ public class Assignments extends AbstractTable<Integer, AssignmentRec> {
     }
 
     @Override
-    public Field<Integer> getIdKey() {
+    public Field<String> getIdKey() {
         return ID;
     }
 

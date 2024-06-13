@@ -7,6 +7,7 @@ import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import std.trck.api.StudyAPI;
 import std.trck.database.DatabaseInitializer;
 import std.trck.internal.BotData;
 import std.trck.jobs.AssignmentReminder;
@@ -27,6 +28,7 @@ public class StudyTracker {
                     .awaitReady();
 
             DatabaseInitializer.init();
+            StudyAPI.init();
 
             SlashCommandsGateway.registerCommands(api);
             registerListeners(api);

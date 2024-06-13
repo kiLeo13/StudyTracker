@@ -10,7 +10,7 @@ import static std.trck.database.tables.Professors.PROFESSORS;
 import static std.trck.database.tables.Subjects.SUBJECTS;
 
 public class AssignmentData {
-    private final int id;
+    private final String uuid;
     private final String title;
     private final String description;
     private final SubjectRec subject;
@@ -19,7 +19,7 @@ public class AssignmentData {
     private final long timeCreated;
 
     public AssignmentData(Record rec) {
-        this.id = rec.get(ASSIGNMENTS.ID);
+        this.uuid = rec.get(ASSIGNMENTS.ID);
         this.title = rec.get(ASSIGNMENTS.TITLE);
         this.description = rec.get(ASSIGNMENTS.DESCRIPTION);
         this.subject = new SubjectRec(rec.get(SUBJECTS.ID), rec.get(SUBJECTS.SIMPLE_NAME), rec.get(SUBJECTS.NAME));
@@ -28,8 +28,8 @@ public class AssignmentData {
         this.timeCreated = rec.get(ASSIGNMENTS.CREATED_AT);
     }
 
-    public int getId() {
-        return id;
+    public String getUUID() {
+        return uuid;
     }
 
     public String getTitle() {

@@ -34,7 +34,7 @@ public class AssignmentsAutoCompletion extends ListenerAdapter {
     private List<Command.Choice> intoChoices(List<AssignmentRec> assgn) {
 
         return assgn.stream()
-                .map(a -> new Command.Choice(a.getTitle(), a.getId()))
+                .map(a -> new Command.Choice(a.getTitle(), a.getUUID()))
                 .toList();
     }
 }

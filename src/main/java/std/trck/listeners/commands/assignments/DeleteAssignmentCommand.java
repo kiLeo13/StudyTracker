@@ -18,10 +18,9 @@ public class DeleteAssignmentCommand implements SlashCommand {
     private static final AssignmentsRepository rep = new AssignmentsRepository();
 
     @Override
-    @SuppressWarnings("DataFlowIssue")
     public void onCommand(SlashCommandInteraction cmd) {
 
-        int assgnId = cmd.getOption("assignment", OptionMapping::getAsInt);
+        String assgnId = cmd.getOption("assignment", OptionMapping::getAsString);
         AssignmentRec assignment = rep.fetchById(assgnId);
 
         if (assignment == null) {
@@ -46,7 +45,7 @@ public class DeleteAssignmentCommand implements SlashCommand {
     @Override
     public List<OptionData> getOptions() {
         return List.of(
-                new OptionData(OptionType.INTEGER, "assignment", "The assignment to be deleted", true, true)
+                new OptionData(OptionType.STRING, "assignment", "The assignment to be deleted", true, true)
         );
     }
 }
